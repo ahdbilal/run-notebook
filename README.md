@@ -102,7 +102,37 @@ notebook-scoped libraries
 ([AWS](https://docs.databricks.com/libraries/notebooks-python-libraries.html) | 
 [Azure](https://docs.microsoft.com/en-us/azure/databricks/libraries/notebooks-python-libraries) | 
 [GCP](https://docs.gcp.databricks.com/libraries/notebooks-python-libraries.html)) 
- 
+
+```yaml
+name: Run a notebook in the current repo on PRs
+
+on:
+  pull_request
+
+env:
+  DATABRICKS_HOST: https://adb-XXXX.XX.azuredatabricks.net
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+      - name: Trigger notebook from PR branch
+        uses: databricks/run-notebook@v0
+        with:
+          local-notebook-path: notebooks/MainNotebook.py
+          databricks-token: ${{ env.DATABRICKS_TOKEN }}
+          new-cluster-json: >
+            {
+              "num_workers": 1,
+              "spark_version": "10.4.x-scala2.12",
+              "node_type_id": "Standard_D3_v2"
+            }
+```
+
+
 ```yaml
 name: Run a notebook in the current repo on PRs
 
